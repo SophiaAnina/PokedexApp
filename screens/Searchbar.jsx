@@ -1,14 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView, Platform, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PokemonCounter from './PokemonPicker';
-import TextInputExample from './Searchbar';
-import { DefaultTheme } from '@react-navigation/native';
-const navTheme = DefaultTheme;
-navTheme.colors.background = '#DEF';
-
+import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import React from 'react';
 const pokemonData = [
   {id: 1,name: 'Bulbasaur',types: ['Grass', 'Poison'],image: require('../pokedexImg/0001 Bulbasaur.png')},
   {id: 2,name: 'Ivysaur',types: ['Grass', 'Poison'],image: require('../pokedexImg/0002 Ivysaur.png')},
@@ -1036,9 +1031,8 @@ const pokemonData = [
 {id:1024, name:'Terapagos',types: ['Grass', 'Ground'],image: require('../pokedexImg/1024 Terapagos.png')},
 {id:1025, name:'Pecharunt',types: ['Grass', 'Ground'],image: require('../pokedexImg/1025 Pecharunt.png')},
 
-
 ];
-const PokemonComponent = ({ pokemon }) => {
+export const PokemonComponent = ({ pokemon }) => {
   return (
 	<View style={styles.ImageContainer}>
 	  <Image source={pokemon.image} style={styles.OverlayImage} />
@@ -1055,204 +1049,228 @@ const PokemonComponent = ({ pokemon }) => {
   );
 };
 
-export  const HomeScreen = () => {
+
+const TextInputExample = () => {
+  const [text, onChangeText] = React.useState('');
+  const [filteredPokemon, setFilteredPokemon] = React.useState(pokemonData);
+
+  const handleSearch = (text) => {
+    const filteredData = pokemonData.filter((pokemon) => {
+      return pokemon.name.toLowerCase().includes(text.toLowerCase());
+    });
+    setFilteredPokemon(filteredData);
+  };
+
+
   return (
-	<View style={styles.container}>
-	  <ScrollView horizontal  snapToInterval={410}
-       decelerationRate={0} 
-       bounces={false} 
- style={styles.column}>
-		{pokemonData.map((pokemon, index) => (
+    <SafeAreaProvider>
+      <SafeAreaView>
+        <TextInput
+          style={styles.input}
+         onChangeText={(text) =>{onChangeText(text); handleSearch(text)}}
+          value={text}
+          placeholder="Pokemon Name"
+         keyboardType='normal'
+        />
+      
+      <ScrollView style={styles.column}>
+		{filteredPokemon.map((pokemon, index) => (
 		  <PokemonComponent key={index} pokemon={pokemon} />
 		))}
 	  </ScrollView>
-	</View>
+	
+	
+      </SafeAreaView>
+    </SafeAreaProvider>
+    
   );
 };
-     
+
 const styles = StyleSheet.create(
   {
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    container: {
+      backgroundColor: '#fff',
+      alignItems: 'center',
+    },
+    scrollHolder:{
+    flexDirection: 'column',
+      overflow: 'scroll',
+      justifyContent:'center',
+      alignItems:'center',
+      
+    },
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+      padding: 10,
+    },
+    column: {
+      flexDirection: 'column',
+      overflow: 'scroll',  
+    },
+    ImageContainer:{
+    width:410,
     alignContent:'center',
-    verticalAlign:'middle'
-  },
-  scrollHolder:{
-  flexDirection: 'column',
-    overflow: 'scroll',
-    justifyContent:'center',
-    alignItems:'center'
+    },
+    OverlayImage: {
+      width: 250,
+      height: 250,
+      resizeMode:'contain',
+     alignSelf:'center',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius:20,
+    },
+    title:{
+    marginLeft:50,
+    fontSize: 30,
+    },
+    DexNumber:{
+    marginLeft:50,
+    fontSize:20,
+    color:'grey',
+    },
+  
+    ButtonContainer:{
+    flexDirection:'row',
+    marginLeft:50,
+    },
+    Grass:{
+    backgroundColor:'limegreen',
+    width:120,
+    marginRight:20,
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Poison:{
+    backgroundColor:'plum',
+    width:120,
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    marginLeft:20,
+    },
+    PoisonText:{
+    color:'white'
+    },
+    Fire:{
+    backgroundColor:'orange',
+    width:100,
     
-  },
-  column: {
-    flexDirection: 'row',
-    overflow: 'scroll',  
-  },
-	ImageContainer:{
-	width:410,
-	alignContent:'center',
+    alignItems:'center',
+    padding:10,
+    borderRadius:5
+    },
+    Flying:{
+    backgroundColor:'skyblue',
+    width:100,
+    marginLeft:20,
+    alignItems:'center',
+    padding:10,
+    borderRadius:5
+    },
   
- 
-	},
-  OverlayImage: {
-    width: 250,
-    height: 250,
-    resizeMode:'contain',
-   alignSelf:'center',
-	borderColor: 'black',
-	borderWidth: 2,
-	borderRadius:20,
-  },
-  title:{
-	marginLeft:50,
-	fontSize: 30,
-  },
-  DexNumber:{
-	marginLeft:50,
-	fontSize:20,
-	color:'grey',
-  },
-
-  ButtonContainer:{
-	flexDirection:'row',
-	marginLeft:50,
-  },
-  Grass:{
-	backgroundColor:'limegreen',
-	width:120,
-	marginRight:20,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Poison:{
-	backgroundColor:'plum',
-	width:120,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-	marginLeft:20,
-  },
-  PoisonText:{
-	color:'white'
-  },
-  Fire:{
-	backgroundColor:'orange',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5
-  },
-  Flying:{
-	backgroundColor:'skyblue',
-	width:100,
-	marginLeft:20,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5
-  },
-
-  Water:{
-	backgroundColor:'darkblue',
-	width:100,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5
-  },
+    Water:{
+    backgroundColor:'darkblue',
+    width:100,
+    alignItems:'center',
+    padding:10,
+    borderRadius:5
+    },
+    
+    WaterText:{
+    color:'white',
+    },
   
-  WaterText:{
-	color:'white',
+    Bug:{
+    backgroundColor:'springgreen',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Normal:{
+    backgroundColor:'grey',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Electric:{
+    backgroundColor:'yellow',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Ground:{
+    backgroundColor:'beige',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Fairy:{
+    backgroundColor:'pink',
+    width:100,
+    marginLeft:20,
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Fighting:{
+    backgroundColor:'orange',
+    width:100,
+    marginLeft:20,
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Psychic:{
+    backgroundColor:'pink',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Rock:{
+    backgroundColor:'brown',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+    Steel:{
+    backgroundColor:'grey',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
+    },
+  Ice:{
+    backgroundColor:'silver',
+    width:100,
+    
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
   },
-
-  Bug:{
-	backgroundColor:'springgreen',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
+  Ghost:{
+    backgroundColor:'magenta',
+    width:100,
+  
+    alignItems:'center',
+    padding:10,
+    borderRadius:5,
   },
-  Normal:{
-	backgroundColor:'grey',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Electric:{
-	backgroundColor:'yellow',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Ground:{
-	backgroundColor:'beige',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Fairy:{
-	backgroundColor:'pink',
-	width:100,
-	marginLeft:20,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Fighting:{
-	backgroundColor:'orange',
-	width:100,
-	marginLeft:20,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Psychic:{
-	backgroundColor:'pink',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Rock:{
-	backgroundColor:'brown',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-  Steel:{
-	backgroundColor:'grey',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-  },
-Ice:{
-	backgroundColor:'silver',
-	width:100,
-	
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-},
-Ghost:{
-	backgroundColor:'magenta',
-	width:100,
-	alignItems:'center',
-	padding:10,
-	borderRadius:5,
-},
 });
+export default TextInputExample

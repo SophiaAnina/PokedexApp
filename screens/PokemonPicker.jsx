@@ -1,22 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
-export default function PokemonPicker() {
+
+const Counter = () => {
+  // Step 4: Define the state for the counter
+  const [count, setCount] = useState(0);
+
+  // Step 5: Create functions to modify the state
+  const increment = () => setCount(count + 1);
+  const decrement = () => setCount(count - 1);
+  const reset = () => setCount(0);
   return (
     <View style={styles.container}>
-     
+      <Text style={styles.counterText}>Count: {count}</Text>
+      <View style={styles.buttonContainer}>
+        <Button title="Increase" onPress={increment} />
+        <Button title="Decrease" onPress={decrement} />
+        <Button title="Reset" onPress={reset} />
+      </View>
     </View>
   );
-}
-
-const styles = StyleSheet.create(
-  {
+};
+export default Counter;
+// Step 6: Create basic styles
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  counterText: {
+    fontSize: 32,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 200,
   },
 });
+
