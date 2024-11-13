@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {HomeScreen} from './screens/HomeScreen';
 import TextInputExample from './screens/Searchbar';
 import PokemonCounter from './screens/PokemonPicker';
+import usePokemonAPI from './screens/usePokemonApi';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -55,6 +56,7 @@ export default function App() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Counter" component={PokemonCounter} />
       <Tab.Screen name="Search" component={TextInputExample} />
+      
      
     </Tab.Navigator>
   </NavigationContainer>

@@ -1,5 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
+import	React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView, Platform, Dimensions } from 'react-native';
+import CheckBox from 'expo-checkbox';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -1038,9 +1040,13 @@ const pokemonData = [
 
 
 ];
-const PokemonComponent = ({ pokemon }) => {
+const PokemonComponent = ({ pokemon, onCheck, isChecked }) => {
   return (
 	<View style={styles.ImageContainer}>
+    <CheckBox
+        value={isChecked}
+        onValueChange={() => onCheck(pokemon.id)}
+      />
 	  <Image source={pokemon.image} style={styles.OverlayImage} />
 	  <Text style={styles.DexNumber}>#{pokemon.id}</Text>
 	  <Text style={styles.title}>{pokemon.name}</Text>
@@ -1048,6 +1054,7 @@ const PokemonComponent = ({ pokemon }) => {
 		{pokemon.types.map((type, index) => (
 		  <View key={index} style={styles[type]}>
 			<Text style={styles[type + 'Text']}>{type}</Text>
+     
 		  </View>
 		))}
 	  </View>
@@ -1056,6 +1063,23 @@ const PokemonComponent = ({ pokemon }) => {
 };
 
 export  const HomeScreen = () => {
+  const [checkedPokemon, setCheckedPokemon] = useState([]);
+
+  const handleCheck = (pokemonId) => {
+    if (checkedPokemon.includes(pokemonId)) {
+      setCheckedPokemon((prevCheckedPokemon) =>
+        prevCheckedPokemon.filter((id) => id !== pokemonId)
+      );
+    } else {
+      setCheckedPokemon((prevCheckedPokemon) => [
+        ...prevCheckedPokemon,
+        pokemonId,
+      ]);
+    }
+  };
+
+  const checkedCount = checkedPokemon.length;
+
   return (
 	<View style={styles.container}>
 	  <ScrollView horizontal  snapToInterval={410}
@@ -1063,9 +1087,14 @@ export  const HomeScreen = () => {
        bounces={false} 
  style={styles.column}>
 		{pokemonData.map((pokemon, index) => (
-		  <PokemonComponent key={index} pokemon={pokemon} />
+		  <PokemonComponent 
+      key={index} 
+      pokemon={pokemon}
+      onCheck={handleCheck}
+      isChecked={checkedPokemon.includes(pokemon.id)} />
 		))}
 	  </ScrollView>
+    <Text>Number of checked Pokemon: {checkedCount}</Text>
 	</View>
   );
 };
